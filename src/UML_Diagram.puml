@@ -1,0 +1,225 @@
+@startuml
+
+' === ENUMS ===
+enum ManMood {
+    DREAM("спит")
+    WORK("работает")
+    ANGRY("злой")
+    FIGHT("напал")
+    HUNGRY("голодный")
+    + static randomMood(): ManMood
+    + toString(): String
+}
+
+enum ManJob {
+    FARMER("фермер")
+    KING("король")
+    GUARDER("охранник")
+    + static random(): ManJob
+    + toString(): String
+}
+
+enum Material {
+    WOOD("дерева")
+    STONE("камня")
+    UNHANDLED_BIG_STONES("крупных необтесанных камней")
+    + static random(): Material
+    + toString(): String
+}
+
+enum Sound {
+    CREAK("скрежет")
+    SCRATCH("скрип")
+    NO_SOUND("беззвучно")
+    + static random(): Sound
+    + toString(): String
+}
+
+enum ThingState {
+    EXIST
+    APPEARED
+    MISAPPREHENDED
+}
+
+' === RECORDS ===
+class Helmet <<record>> {
+    + toString(): String
+}
+
+class Spear <<record>> {
+    + toString(): String
+}
+
+' === INTERFACES ===
+interface BaseMove {
+    + go()
+    + see(Thing thing)
+}
+
+interface ExtendedMove {
+    + think(String thought)
+    + fastOpenCloseEyes()
+    + goTo(Thing thing)
+    + checkMood(ManMood mood): Boolean
+}
+
+' === ABSTRACT CLASSES ===
+abstract class Thing {
+    + {static} title: String
+    - state: ThingState
+    + {abstract} appeared()
+    + {abstract} misapprehended()
+    + changeVisibleState()
+}
+
+abstract class NatureObject {
+    + {abstract} toString(): String
+}
+
+abstract class Building {
+    - material: Material
+    + toString(): String
+}
+
+abstract class Man {
+    - name: String
+    - mood: ManMood
+    + getName(): String
+    + getMood(): ManMood
+    + randomUpdateMood()
+    + {abstract} go()
+    + {abstract} see(Thing)
+}
+
+' === CONCRETE CLASSES ===
+class MainHero {
+    + seenThings: List<Thing>
+    + seenPersons: List<Personage>
+    + think(String): void
+    + fastOpenCloseEyes(): void
+    + goTo(Thing): void
+    + checkMood(ManMood): Boolean
+    + go(): void
+    + see(Thing): void
+    + toString(): String
+    + equals(Object): boolean
+    + hashCode(): int
+}
+
+class Personage {
+    - manJob: ManJob
+    - helmet: Helmet
+    - spear: Spear
+    + contact(Man): void
+    + getManJob(): ManJob
+    + setManJob(ManJob): void
+    + go(): void
+    + see(Thing): void
+    + toString(): String
+    + equals(Object): boolean
+    + hashCode(): int
+}
+
+class Sea {
+    + toString(): String
+}
+
+class Sky {
+    + toString(): String
+    + appeared(): void
+    + misapprehended(): void
+}
+
+class Castle {
+    - doors: Door[]
+    - towers: Tower[]
+    - walls: Wall[]
+    + getAllConstructions(): Thing[]
+    + toString(): String
+}
+
+class Door {
+    - hinges: Hinge[4]
+    - isOpen: boolean
+    + isOpen(): boolean
+    + getDoorState(): String
+    + tryToOpen(): void
+    + toString(): String
+}
+
+class Wall {
+    + toString(): String
+}
+
+class Tower {
+    + toString(): String
+}
+
+class Hinge {
+    - sound: Sound
+    + playSound(): void
+    + getSound(): Sound
+    + toString(): String
+}
+
+class World {
+    - hero: MainHero
+    - personages: Personage[]
+    - sky: Sky
+    - sea: Sea
+    - castle: Castle
+    - AllThings: List<Thing>
+    - WorldGenerating(): void
+    + PlayStory(): void
+}
+
+' === НАСЛЕДОВАНИЕ (Generalization) ===
+Thing <|-- NatureObject
+NatureObject <|-- Sea
+NatureObject <|-- Sky
+
+Thing <|-- Building
+Building <|-- Castle
+Building <|-- Door
+Building <|-- Wall
+Building <|-- Tower
+
+Thing <|-- Hinge
+
+Man <|-- MainHero
+Man <|-- Personage
+
+' === РЕАЛИЗАЦИЯ ИНТЕРФЕЙСОВ (Realization) ===
+Man ..|> BaseMove : implements
+MainHero ..|> ExtendedMove : implements
+ExtendedMove <|.. BaseMove : extends
+
+' === КОМПОЗИЦИЯ / АГРЕГАЦИЯ ===
+Castle *-- "1..4" Door : contains
+Castle *-- "1..4" Tower : contains
+Castle *-- "1..4" Wall : contains
+
+Door *-- "4" Hinge : has
+
+Personage o-- "0..1" Helmet : may have
+Personage o-- "0..1" Spear : may have
+
+MainHero *-- "0..*" Thing : seenThings
+MainHero *-- "0..*" Personage : seenPersons
+
+World *-- MainHero : owns
+World *-- "1..5" Personage : contains
+World *-- Sky : has
+World *-- Sea : has
+World *-- Castle : has
+World *-- "0..*" Thing : AllThings
+
+' === ЗАВИСИМОСТИ (использование enum и других классов) ===
+Thing ..> ThingState : uses
+Man ..> ManMood : uses
+Personage ..> ManJob : uses
+Building ..> Material : uses
+Hinge ..> Sound : uses
+MainHero ..> ManMood : checks
+
+@enduml

@@ -1,5 +1,6 @@
 package personajes;
 
+import World.WorldContext;
 import things.Thing;
 
 import java.util.ArrayList;
@@ -56,5 +57,10 @@ public class MainHero extends Man implements ExtendedMove{
     @Override
     public int hashCode() {
         return super.hashCode();
+    }
+
+    @Override
+    public void updateMoodBasedOnWorld(WorldContext context) {
+
     }
 }

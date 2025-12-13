@@ -1,13 +1,18 @@
 package personajes;
 
+import World.WorldContext;
+
 public abstract class Man implements BaseMove{
     private String name;
     private ManMood mood;
-
+    public Man(String name) {
+        this.name = name;
+    }
     public Man(String name, ManMood mood) {
         this.name = name;
         this.mood = mood;
     }
+    public abstract void updateMoodBasedOnWorld(WorldContext context);
 
 
     public String getName() {
@@ -22,9 +27,10 @@ public abstract class Man implements BaseMove{
         return mood;
     }
 
-    private void setMood(ManMood mood) {
+    public void setMood(ManMood mood) {
         this.mood = mood;
     }
+
 
     public void randomUpdateMood(){
         setMood(ManMood.randomMood());

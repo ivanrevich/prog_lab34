@@ -1,8 +1,9 @@
+package World;
+
 import nature.NatureObject;
 import nature.Sea;
 import nature.Sky;
 import personajes.MainHero;
-import personajes.ManJob;
 import personajes.ManMood;
 import personajes.Personage;
 import things.Thing;
@@ -21,7 +22,12 @@ public class World {
 
     private ArrayList<Thing> AllThings = new ArrayList<Thing>();
 
-
+    private TimeOfDay timeOfDay = TimeOfDay.random();
+    public TimeOfDay getTimeOfDay() { return timeOfDay; }
+    public void updateTime() {
+        timeOfDay = TimeOfDay.values()[(timeOfDay.ordinal() + 1) % TimeOfDay.values().length];
+        System.out.println("Наступило " + timeOfDay);
+    }
     public World() {
         WorldGenerating();
     }
@@ -50,10 +56,18 @@ public class World {
     }
 
     public void PlayStory() {
+        WorldContext context = new WorldContext(
+                sky.getWeather(),
+                timeOfDay,
+                castle.getState()
+        );
+
+
         Random random = new Random();
         while (hero.seenThings.size() != AllThings.size() || hero.seenPersons.size()!=personages.length) {
             Personage pers = personages[random.nextInt(0, personages.length)];
             Thing th = AllThings.get(random.nextInt(0, AllThings.size()));
+
             if (!hero.seenThings.contains(th)) {
                 if (random.nextBoolean() && th instanceof NatureObject) th.changeVisibleState();
                 hero.see(th);
@@ -73,9 +87,20 @@ public class World {
                 }
 
             }
+
             if (!hero.seenPersons.contains(pers)) {
-                pers.contact(hero);
+                pers.contact(hero, context);
+
+                hero.updateMoodBasedOnWorld(context);
+                pers.updateMoodBasedOnWorld(context);
+
                 hero.seenPersons.add(pers);
+            }
+
+            if (random.nextInt(10) == 0) {
+                sky.changeWeather();
+                updateTime();
+                context = new WorldContext(sky.getWeather(), timeOfDay, castle.getState());
             }
         }
     }

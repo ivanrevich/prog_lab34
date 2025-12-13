@@ -10,6 +10,15 @@ public class Castle extends Building{
     private Tower[] towers;
     private Wall[] walls;
 
+    private CastleState state = CastleState.values()[new Random().nextInt(CastleState.values().length)];
+
+    public CastleState getState() { return state; }
+
+    @Override
+    public String toString() {
+        return super.title + " (" + state + ")";
+    }
+
     public Castle() {
         super("замок", Material.random());
         Random random = new Random();
@@ -45,11 +54,6 @@ public class Castle extends Building{
             alls.add(d);
         }
         return alls.toArray(Thing[]::new);
-    }
-
-    @Override
-    public String toString() {
-        return super.title;
     }
 
     @Override
