@@ -1,7 +1,10 @@
 package personajes;
 
 import World.WorldContext;
+import exceptions.ThingInvisibleException;
+import nature.Weather;
 import things.Thing;
+import things.ThingState;
 
 import java.util.ArrayList;
 public class MainHero extends Man implements ExtendedMove{
@@ -23,22 +26,21 @@ public class MainHero extends Man implements ExtendedMove{
     }
 
     @Override
-    public void goTo(Thing thing) {
-        System.out.println(super.getName() + " пришёл к "+thing.toString());
-    }
-
-    @Override
     public Boolean checkMood(ManMood mood) {
         return getMood()==mood;
     }
 
     @Override
-    public void go() {
-        System.out.println(super.getName() + " зашагал дальше");
+    public void go(GoType goType) {
+
+        System.out.println(super.getName() + " "+goType.name);
     }
 
     @Override
-    public void see(Thing thing) {
+    public void see(Thing thing) throws ThingInvisibleException {
+        if (thing.getState() == ThingState.MISAPPREHENDED) {
+            throw new ThingInvisibleException("Невозможно рассмотреть '" + thing.title + "' — он не видим!");
+        }
         seenThings.add(thing);
         System.out.println(super.getName() + " посмотрел на " + thing.toString());
     }
@@ -60,7 +62,20 @@ public class MainHero extends Man implements ExtendedMove{
     }
 
     @Override
-    public void updateMoodBasedOnWorld(WorldContext context) {
+    public void updateMoodBasedOnWorld(WorldContext ctx) {
+        ManMood newMood = getMood();
 
+        if (ctx.time().isNight()) {
+            newMood = ManMood.DREAM;
+        } else if (ctx.time().isMorning()) {
+            newMood = ManMood.HUNGRY;
+        }
+
+        if (ctx.weather() == Weather.RAINY) {
+            newMood = ManMood.SAD;
+        }
+
+        System.out.println(getName() +" "+ newMood);
+        setMood(newMood);
     }
 }

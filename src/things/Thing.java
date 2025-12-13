@@ -6,13 +6,13 @@ public abstract class Thing {
 
     protected Thing(String title) {
         this.title = title;
-        state = ThingState.EXIST;
+        state = ThingState.APPEARED;
     }
 
     public void changeVisibleState(){
-        if(state==ThingState.APPEARED ){
+        if(state==ThingState.APPEARED){
             misapprehended();
-        }else if(state==ThingState.MISAPPREHENDED || state == ThingState.EXIST){
+        }else if(state==ThingState.MISAPPREHENDED){
             appeared();
         }
     }
@@ -26,5 +26,11 @@ public abstract class Thing {
         System.out.println(title+" исчезло");
     }
 
+    public ThingState getState() {
+        return state;
+    }
 
+    public void setState(ThingState state) {
+        this.state = state;
+    }
 }

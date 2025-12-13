@@ -3,11 +3,14 @@ package personajes;
 import java.util.Random;
 
 public enum ManMood {
+    WOKE_UP("проснулся"),
+    IDLE("ничего не делает"),
     DREAM("спит"),
     WORK("работает"),
-    ANGRY("злой"),
+    ANGRY("злиться"),
     FIGHT("напал"),
-    HUNGRY("голодный");
+    HUNGRY("голодный"),
+    SAD("грустит");
 
     private final String title;
     ManMood(String s) {
@@ -24,29 +27,38 @@ public enum ManMood {
         Random random = new Random();
         switch (job) {
             case KING:
-                // Король редко злится или голоден; чаще "работает" (правит) или спокоен (спит редко)
-                ManMood[] kingMoods = {WORK, DREAM, ANGRY}; // ANGRY — редко
+                ManMood[] kingMoods = {DREAM, DREAM, ANGRY, IDLE, SAD};
                 return kingMoods[random.nextInt(kingMoods.length)];
             case FARMER:
-                // Фермер часто работает или голоден
-                ManMood[] farmerMoods = {WORK, HUNGRY, DREAM, ANGRY};
+                ManMood[] farmerMoods = {WORK, HUNGRY, DREAM, SAD};
                 return farmerMoods[random.nextInt(farmerMoods.length)];
             case GUARDER:
-                // Охранник — в бою или на страже; почти не спит
-                ManMood[] guardMoods = {FIGHT, WORK, ANGRY};
+                ManMood[] guardMoods = {FIGHT, FIGHT, WORK, ANGRY, ANGRY, SAD};
                 return guardMoods[random.nextInt(guardMoods.length)];
-            default:
+            case null, default:
                 return MOODS[RANDOM.nextInt(MOODS.length)];
         }
     }
+    public static ManMood moodFromContact(Man man) {
+        Random random = new Random();
+        if(random.nextInt(10)<2){
+            return man.getMood();
+        }
+        return randomMood();
+    }
+
+
 
     public Dialogue getDialogue() {
         return switch (this) {
+            case IDLE -> (name, ctx) -> name+" спросил: \"Чего ты хочешь?\"";
             case DREAM -> (name, ctx) -> name + " бормочет во сне: \"ещё пять минуточек...\"";
             case HUNGRY -> (name, ctx) -> name + " жалобно: \"У тебя нет еды?\"";
             case ANGRY -> (name, ctx) -> name + " рявкает: \"Чего тебе?!\"";
             case FIGHT -> (name, ctx) -> name + " рычит: \"В бой!\"";
             case WORK -> (name, ctx) -> name + " отвлекся от работы: \"Привет, " + ctx + "\"";
+            case SAD -> (name, ctx) -> name + " грустный и разочарованный";
+            case WOKE_UP -> (name, ctx)-> name+" проснулся";
         };
     }
 

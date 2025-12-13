@@ -1,8 +1,10 @@
 package World;
 
+import exceptions.ThingInvisibleException;
 import nature.NatureObject;
 import nature.Sea;
 import nature.Sky;
+import personajes.GoType;
 import personajes.MainHero;
 import personajes.ManMood;
 import personajes.Personage;
@@ -20,19 +22,20 @@ public class World {
     private Sea sea;
     private Castle castle;
 
-    private ArrayList<Thing> AllThings = new ArrayList<Thing>();
+    private final ArrayList<Thing> AllThings = new ArrayList<Thing>();
 
     private TimeOfDay timeOfDay = TimeOfDay.random();
-    public TimeOfDay getTimeOfDay() { return timeOfDay; }
+
     public void updateTime() {
         timeOfDay = TimeOfDay.values()[(timeOfDay.ordinal() + 1) % TimeOfDay.values().length];
         System.out.println("Наступило " + timeOfDay);
     }
+
     public World() {
         WorldGenerating();
     }
 
-    private void WorldGenerating(){
+    private void WorldGenerating() {
         castle = new Castle();
         sea = new Sea();
         sky = new Sky();
@@ -42,9 +45,9 @@ public class World {
         hero = new MainHero("Нильс");
 
         //// GENERATING PERSONAGES
-        int countOfPersonages =  1+(int) (Math.random() * 5);
+        int countOfPersonages = 1 + (int) (Math.random() * 5);
         personages = new Personage[countOfPersonages];
-        for(int i = 0; i<countOfPersonages; i++){
+        for (int i = 0; i < countOfPersonages; i++) {
             personages[i] = new Personage();
         }
         //// ADD IT TO WORLD OBJECTS
@@ -59,48 +62,62 @@ public class World {
         WorldContext context = new WorldContext(
                 sky.getWeather(),
                 timeOfDay,
-                castle.getState()
+                castle.getStateCastle()
         );
 
-
         Random random = new Random();
-        while (hero.seenThings.size() != AllThings.size() || hero.seenPersons.size()!=personages.length) {
+        while (hero.seenThings.size() != AllThings.size() || hero.seenPersons.size() != personages.length) {
             Personage pers = personages[random.nextInt(0, personages.length)];
             Thing th = AllThings.get(random.nextInt(0, AllThings.size()));
 
             if (!hero.seenThings.contains(th)) {
                 if (random.nextBoolean() && th instanceof NatureObject) th.changeVisibleState();
-                hero.see(th);
-                if (random.nextBoolean() && th instanceof Door) {
-                    ((Door) th).getDoorState();
-                    ((Door) th).tryToOpen();
-                }
-                if (random.nextInt(0, 10) == 5) {
-                    hero.think("Может, я все-таки сплю?");
-                    hero.fastOpenCloseEyes();
-                    if (hero.checkMood(ManMood.DREAM)) {
-                        hero.think("Похоже на сон");
-                    } else {
-                        hero.think("Да, нет вроде не сплю");
+                if (hero.getMood() != ManMood.DREAM) {
+                    try {
+                        hero.see(th);
+                    } catch (ThingInvisibleException e) {
+                        System.out.println(e.getMessage());
                     }
-                    hero.see(th);
+                    if (random.nextBoolean() && th instanceof Door) {
+                        ((Door) th).getDoorState();
+                        ((Door) th).tryToOpen();
+                        if (((Door) th).isOpen()) {
+                            hero.go(GoType.COME_IN);
+                        }
+                    }
+                    if (random.nextInt(0, 10) == 5) {
+                        hero.think("Может, я все-таки сплю?");
+                        hero.fastOpenCloseEyes();
+                        if (hero.checkMood(ManMood.DREAM)) {
+                            hero.think("Похоже на сон");
+                        } else {
+                            hero.think("Да, нет вроде не сплю");
+                        }
+                        try {
+                            hero.see(th);
+                        } catch (ThingInvisibleException e) {
+                            System.out.println(e.getMessage());
+                        }
+                    }
+                    hero.go(GoType.GO_NEXT);
+                } else {
+                    if (!timeOfDay.isNight() || random.nextBoolean()) {
+                        hero.setMood(ManMood.WOKE_UP);
+                        hero.setMood(ManMood.HUNGRY);
+                    }
                 }
-
             }
 
             if (!hero.seenPersons.contains(pers)) {
                 pers.contact(hero, context);
 
-                hero.updateMoodBasedOnWorld(context);
-                pers.updateMoodBasedOnWorld(context);
-
                 hero.seenPersons.add(pers);
             }
 
-            if (random.nextInt(10) == 0) {
+            if (random.nextInt(100) <= 5) {
                 sky.changeWeather();
                 updateTime();
-                context = new WorldContext(sky.getWeather(), timeOfDay, castle.getState());
+                context = new WorldContext(sky.getWeather(), timeOfDay, castle.getStateCastle());
             }
         }
     }

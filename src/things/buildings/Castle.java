@@ -10,13 +10,13 @@ public class Castle extends Building{
     private Tower[] towers;
     private Wall[] walls;
 
-    private CastleState state = CastleState.values()[new Random().nextInt(CastleState.values().length)];
+    private CastleState stateCastle = CastleState.values()[new Random().nextInt(CastleState.values().length)];
 
-    public CastleState getState() { return state; }
+    public CastleState getStateCastle() { return stateCastle; }
 
     @Override
     public String toString() {
-        return super.title + " (" + state + ")";
+        return super.title + " (" + stateCastle + ")";
     }
 
     public Castle() {

@@ -9,7 +9,7 @@ import things.weapons.Spear;
 
 import java.util.Random;
 
-public class Personage extends Man{
+public class Personage extends Man implements BaseMove{
     private ManJob manJob;
     private Helmet helmet;
     private Spear spear;
@@ -30,11 +30,15 @@ public class Personage extends Man{
 
         super(names[random.nextInt(0, names.length)]);
         this.manJob=ManJob.random();
+        if(manJob==ManJob.GUARDER){
+            helmet = new Helmet();
+            spear = new Spear();
+        }
         setMood(ManMood.randomMood(manJob));
     }
 
     public void contact(Man observer, WorldContext context) {
-        System.out.println(observer.getName() + " увидел " + getMood() + " " + manJob + " по имени " + getName());
+        System.out.println(observer.getName() + " увидел как " + getMood() + " " + manJob + " по имени " + getName());
 
         if (helmet != null) System.out.println("На нём был " + helmet);
         if (spear != null) System.out.println("В руках " + spear);
@@ -45,35 +49,41 @@ public class Personage extends Man{
 
         if (manJob == ManJob.GUARDER && getMood() == ManMood.FIGHT) {
             System.out.println(getName() + " кричит: \"Стой! Кто идёт?!\"");
+            attack(observer);
+            go(GoType.RUN);
+            observer.go(GoType.RUN);
+            observer.setMood(ManMood.SAD);
+        }else{
+            setMood(ManMood.moodFromContact(observer));
+            observer.setMood(ManMood.moodFromContact(this));
         }
-
-        observer.updateMoodBasedOnWorld(context); // <-- см. ниже
+        updateMoodBasedOnWorld(context);
+        observer.updateMoodBasedOnWorld(context);
     }
 
     @Override
     public void updateMoodBasedOnWorld(WorldContext ctx) {
         ManMood newMood = getMood();
 
-        // Влияние времени суток
-        if (ctx.getTime().isNight()) {
+        if (ctx.time().isNight()) {
             if (manJob != ManJob.GUARDER) {
-                newMood = ManMood.DREAM; // все спят, кроме охраны
+                newMood = ManMood.DREAM;
             }
-        } else if (ctx.getTime().isMorning()) {
-            newMood = ManMood.HUNGRY; // утро → голод
+        } else if (ctx.time().isMorning()) {
+            newMood = ManMood.HUNGRY;
         }
 
-        if (ctx.getWeather() == Weather.RAINY) {
+        if (ctx.weather() == Weather.RAINY) {
             if (manJob != ManJob.KING) {
-                newMood = ManMood.ANGRY; // простые люди злятся в дождь
+                newMood = ManMood.ANGRY;
             }
         }
-        if (ctx.getCastleState() == CastleState.GUARDED && manJob == ManJob.GUARDER) {
+        if (ctx.castleState() == CastleState.GUARDED && manJob == ManJob.GUARDER) {
             newMood = ManMood.WORK;
         }
 
+        System.out.println(getName() +" "+ newMood);
         setMood(newMood);
-        System.out.println(getName() + " теперь " + newMood);
     }
 
     public ManJob getManJob() {
@@ -85,14 +95,15 @@ public class Personage extends Man{
     }
 
     @Override
-    public void go() {
-        System.out.println(super.getName()+" ходил");
+    public void go(GoType goType) {
+        System.out.println(super.getName()+" "+goType.name);
     }
 
     @Override
     public void see(Thing thing) {
         System.out.println(super.getName()+" увидел");
     }
+
 
     @Override
     public String toString() {

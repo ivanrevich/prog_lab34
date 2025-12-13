@@ -32,8 +32,8 @@ public abstract class Man implements BaseMove{
     }
 
 
-    public void randomUpdateMood(){
-        setMood(ManMood.randomMood());
-        System.out.println(name+" вдруг " +this.getMood());
+    @Override
+    public void attack(Man man) {
+        System.out.println(getName()+" атаковал "+man.getName());
     }
 }
