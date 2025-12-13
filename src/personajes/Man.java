@@ -9,6 +9,7 @@ public abstract class Man implements BaseMove{
         this.mood = mood;
     }
 
+
     public String getName() {
         return name;
     }

@@ -1,7 +1,5 @@
 package things.buildings;
 
-import personajes.ManMood;
-
 import java.util.Random;
 
 public enum Material{

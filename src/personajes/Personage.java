@@ -28,7 +28,6 @@ public class Personage extends Man{
     }
 
     public void contact(Man man){
-        /// HINGE SOUND AND DOORS
         System.out.println(man.getName()+" увидел "+getMood()+" "+manJob.toString()+" которого звали "+this.getName());
         if(helmet!=null){
             System.out.println("У него был "+ helmet);

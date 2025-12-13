@@ -3,7 +3,7 @@ package things.buildings;
 import java.util.Random;
 
 public class Door extends Building{
-    Hinge[] hinges = new Hinge[4];
+    private Hinge[] hinges = new Hinge[4];
     private boolean isOpen = false;
     protected Door(String title, Material material) {
         super(title, material);
