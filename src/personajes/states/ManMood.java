@@ -38,9 +38,8 @@ public enum ManMood {
             case GUARDER:
                 ManMood[] guardMoods = {FIGHT, FIGHT, WORK, ANGRY, ANGRY, SAD};
                 return guardMoods[random.nextInt(guardMoods.length)];
-            case null, default:
-                return MOODS[RANDOM.nextInt(MOODS.length)];
         }
+        return MOODS[RANDOM.nextInt(MOODS.length)];
     }
     public static ManMood moodFromContact(Man man) {
         Random random = new Random();
