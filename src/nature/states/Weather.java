@@ -1,4 +1,4 @@
-package nature;
+package nature.states;
 
 public enum Weather {
     SUNNY("ясно"),

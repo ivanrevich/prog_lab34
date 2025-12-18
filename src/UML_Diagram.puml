@@ -1,225 +1,329 @@
 @startuml
+skinparam style strictstyle
+left to right direction
+skinparam linetype straight
 
-' === ENUMS ===
-enum ManMood {
-    DREAM("спит")
-    WORK("работает")
-    ANGRY("злой")
-    FIGHT("напал")
-    HUNGRY("голодный")
-    + static randomMood(): ManMood
-    + toString(): String
+package "People"{
+    package "states"{
+        enum GoType {
+            RUN("бежит")
+            COME_IN("вошёл")
+            GO_NEXT("пошёл дальше")
+        }
+
+        enum ManJob {
+            FARMER("фермер")
+            KING("король")
+            GUARDER("охранник")
+        }
+
+        enum ManMood {
+            WOKE_UP("проснулся")
+            IDLE("ничего не делает")
+            DREAM("спит")
+            WORK("работает")
+            ANGRY("злится")
+            FIGHT("напал")
+            HUNGRY("голодный")
+            SAD("грустит")
+            ----
+            + getDialogue(): Dialogue
+            + randomMood(ManJob): ManMood
+        }
+    }
+
+    package "Interfaces"{
+        interface Dialogue {
+            + speak(String speakerName, String context)
+        }
+
+        interface BaseMove {
+            + go(GoType goType)
+            + see(Thing thing)
+            + attack(Man man)
+        }
+
+        interface ExtendedMove {
+            + think(String thought)
+            + fastOpenCloseEyes()
+            + checkMood(ManMood mood)
+        }
+    }
+
+    abstract class Man {
+        - String name
+        - ManMood mood
+        + getName()
+        + getMood()
+        + setMood(ManMood)
+        + {abstract} updateMoodBasedOnWorld(WorldContext context)
+        + attack(Man man)
+    }
+
+
+    class MainHero {
+        + ArrayList<Thing> seenThings
+        + ArrayList<Personage> seenPersons
+        + MainHero(String name)
+        + think(String)
+        + fastOpenCloseEyes()
+        + checkMood(ManMood)
+        + go(GoType)
+        + see(Thing) throws ThingInvisibleException
+        + updateMoodBasedOnWorld(WorldContext)
+    }
+
+    class Personage {
+        - ManJob manJob
+        - Helmet helmet
+        - Spear spear
+        + Personage()
+        + Personage(String, ManJob, ManMood)
+        + contact(Man observer, WorldContext context)
+        + go(GoType)
+        + see(Thing)
+        + updateMoodBasedOnWorld(WorldContext)
+    }
+    package "Weapons"{
+        class Helmet <<record>> {
+            + toString()
+        }
+
+        class Spear <<record>> {
+            + toString()
+        }
+    }
 }
 
-enum ManJob {
-    FARMER("фермер")
-    KING("король")
-    GUARDER("охранник")
-    + static random(): ManJob
-    + toString(): String
+
+package "Nature"{
+    package "states"{
+        enum Weather {
+            SUNNY("ясно")
+            RAINY("дождливо")
+            CLOUDY("пасмурно")
+            + static random()
+        }
+
+        enum TimeOfDay {
+            MORNING("утро")
+            DAY("день")
+            EVENING("вечер")
+            NIGHT("ночь")
+            + isNight()
+            + isMorning()
+            + static random()
+        }
+    }
+    class Sea {
+        + Sea()
+        + toString()
+    }
+
+    class Sky {
+        - Weather weather
+        + Sky()
+        + toString()
+        + getWeather()
+        + changeWeather()
+        + appeared()
+        + misapprehended()
+    }
+    abstract class NatureObject {
+        + {protected} NatureObject(String title)
+    }
+
+
+    class WorldContext <<record>> {
+        + Weather weather
+        + TimeOfDay time
+        + CastleState castleState
+    }
+
+    class World {
+        - MainHero hero
+        - Personage[] personages
+        - Sky sky
+        - Sea sea
+        - Castle castle
+        - ArrayList<Thing> AllThings
+        - TimeOfDay timeOfDay
+        + World()
+        + PlayStory()
+        - WorldGenerating()
+        + updateTime()
+       }
 }
 
-enum Material {
-    WOOD("дерева")
-    STONE("камня")
-    UNHANDLED_BIG_STONES("крупных необтесанных камней")
-    + static random(): Material
-    + toString(): String
+package "Things"{
+    package "states"{
+        enum Sound {
+            CREAK("скрежет")
+            SCRATCH("скрип")
+            NO_SOUND("беззвучно")
+            + static random()
+        }
+
+        enum ThingState {
+            APPEARED
+            MISAPPREHENDED
+        }
+    }
+
+    abstract class Thing {
+        + {field} final String title
+        - ThingState state
+        + {abstract} appeared()
+        + {abstract} misapprehended()
+        + changeVisibleState()
+        + getState()
+        + setState(ThingState)
+    }
 }
 
-enum Sound {
-    CREAK("скрежет")
-    SCRATCH("скрип")
-    NO_SOUND("беззвучно")
-    + static random(): Sound
-    + toString(): String
+    package "Buildings"{
+        package "states"{
+            enum CastleState {
+                INTACT("целый")
+                DAMAGED("повреждённый")
+                RUINED("разрушенный")
+                GUARDED("под охраной")
+            }
+
+            enum Material {
+                WOOD("дерева")
+                STONE("камня")
+                UNHANDLED_BIG_STONES("крупных необтесанных камней")
+                + static random()
+            }
+        }
+        abstract class Building {
+            - Material material
+            + {protected} Building(String title, Material material)
+            + toString()
+        }
+
+        class Castle {
+            - Door[] doors
+            - Tower[] towers
+            - Wall[] walls
+            - CastleState stateCastle
+            + Castle()
+            + getStateCastle()
+            + getAllConstructions() : Thing[]
+            + toString()
+        }
+
+        class Door {
+            - Hinge[] hinges
+            - boolean isOpen
+            + Door(String, Material)
+            + isOpen()
+            + tryToOpen()
+            + toString()
+        }
+
+        class Tower {
+            + Tower(String, Material)
+        }
+
+        class Wall {
+            + Wall(String, Material)
+        }
+
+        class Hinge {
+            - Sound sound
+            + Hinge()
+            + playSound()
+            + getSound()
+        }
+    }
+package "Exceptions"{
+    class ThingInvisibleException <<exception>> {
+        + ThingInvisibleException(String)
+        + getMessage()
+    }
 }
 
-enum ThingState {
-    EXIST
-    APPEARED
-    MISAPPREHENDED
-}
 
-' === RECORDS ===
-class Helmet <<record>> {
-    + toString(): String
-}
 
-class Spear <<record>> {
-    + toString(): String
-}
 
-' === INTERFACES ===
-interface BaseMove {
-    + go()
-    + see(Thing thing)
-}
 
-interface ExtendedMove {
-    + think(String thought)
-    + fastOpenCloseEyes()
-    + goTo(Thing thing)
-    + checkMood(ManMood mood): Boolean
-}
+' ================================
+' INHERITANCE & IMPLEMENTATION
+' ================================
 
-' === ABSTRACT CLASSES ===
-abstract class Thing {
-    + {static} title: String
-    - state: ThingState
-    + {abstract} appeared()
-    + {abstract} misapprehended()
-    + changeVisibleState()
-}
-
-abstract class NatureObject {
-    + {abstract} toString(): String
-}
-
-abstract class Building {
-    - material: Material
-    + toString(): String
-}
-
-abstract class Man {
-    - name: String
-    - mood: ManMood
-    + getName(): String
-    + getMood(): ManMood
-    + randomUpdateMood()
-    + {abstract} go()
-    + {abstract} see(Thing)
-}
-
-' === CONCRETE CLASSES ===
-class MainHero {
-    + seenThings: List<Thing>
-    + seenPersons: List<Personage>
-    + think(String): void
-    + fastOpenCloseEyes(): void
-    + goTo(Thing): void
-    + checkMood(ManMood): Boolean
-    + go(): void
-    + see(Thing): void
-    + toString(): String
-    + equals(Object): boolean
-    + hashCode(): int
-}
-
-class Personage {
-    - manJob: ManJob
-    - helmet: Helmet
-    - spear: Spear
-    + contact(Man): void
-    + getManJob(): ManJob
-    + setManJob(ManJob): void
-    + go(): void
-    + see(Thing): void
-    + toString(): String
-    + equals(Object): boolean
-    + hashCode(): int
-}
-
-class Sea {
-    + toString(): String
-}
-
-class Sky {
-    + toString(): String
-    + appeared(): void
-    + misapprehended(): void
-}
-
-class Castle {
-    - doors: Door[]
-    - towers: Tower[]
-    - walls: Wall[]
-    + getAllConstructions(): Thing[]
-    + toString(): String
-}
-
-class Door {
-    - hinges: Hinge[4]
-    - isOpen: boolean
-    + isOpen(): boolean
-    + getDoorState(): String
-    + tryToOpen(): void
-    + toString(): String
-}
-
-class Wall {
-    + toString(): String
-}
-
-class Tower {
-    + toString(): String
-}
-
-class Hinge {
-    - sound: Sound
-    + playSound(): void
-    + getSound(): Sound
-    + toString(): String
-}
-
-class World {
-    - hero: MainHero
-    - personages: Personage[]
-    - sky: Sky
-    - sea: Sea
-    - castle: Castle
-    - AllThings: List<Thing>
-    - WorldGenerating(): void
-    + PlayStory(): void
-}
-
-' === НАСЛЕДОВАНИЕ (Generalization) ===
 Thing <|-- NatureObject
+Thing <|-- Building
+Thing <|-- Hinge
+
+
 NatureObject <|-- Sea
 NatureObject <|-- Sky
 
-Thing <|-- Building
 Building <|-- Castle
 Building <|-- Door
-Building <|-- Wall
 Building <|-- Tower
-
-Thing <|-- Hinge
+Building <|-- Wall
 
 Man <|-- MainHero
 Man <|-- Personage
 
-' === РЕАЛИЗАЦИЯ ИНТЕРФЕЙСОВ (Realization) ===
-Man ..|> BaseMove : implements
-MainHero ..|> ExtendedMove : implements
-ExtendedMove <|.. BaseMove : extends
+BaseMove <|-- ExtendedMove
+BaseMove <.. Man
 
-' === КОМПОЗИЦИЯ / АГРЕГАЦИЯ ===
-Castle *-- "1..4" Door : contains
-Castle *-- "1..4" Tower : contains
-Castle *-- "1..4" Wall : contains
+MainHero ..> ExtendedMove
 
-Door *-- "4" Hinge : has
+' ================================
+' COMPOSITION / AGGREGATION
+' ================================
 
-Personage o-- "0..1" Helmet : may have
-Personage o-- "0..1" Spear : may have
+Thing o-- "0..*" ThingState
+Hinge o-- "0..*" Sound
+Castle o-- "0..*" CastleState
+Building o-- "0..*" Material
+Personage o-- "0..*" ManJob
+Man o-- "0..*" ManMood
 
-MainHero *-- "0..*" Thing : seenThings
-MainHero *-- "0..*" Personage : seenPersons
+Castle *-- "0..*" Door
+Castle *-- "0..*" Tower
+Castle *-- "0..*" Wall
 
-World *-- MainHero : owns
-World *-- "1..5" Personage : contains
-World *-- Sky : has
-World *-- Sea : has
-World *-- Castle : has
+Door *-- "4" Hinge
+
+Personage *-- "0..1" Helmet
+Personage *-- "0..1" Spear
+
+World *-- "1" MainHero
+World *-- "1..5" Personage
+World *-- "1" Sky
+World *-- "1" Sea
+World *-- "1" Castle
 World *-- "0..*" Thing : AllThings
 
-' === ЗАВИСИМОСТИ (использование enum и других классов) ===
-Thing ..> ThingState : uses
-Man ..> ManMood : uses
-Personage ..> ManJob : uses
-Building ..> Material : uses
-Hinge ..> Sound : uses
-MainHero ..> ManMood : checks
+MainHero *-- "seen" Thing : seenThings
+MainHero *-- "seen" Personage : seenPersons
+
+Sky --> Weather
+WorldContext --> Weather
+WorldContext --> TimeOfDay
+WorldContext --> CastleState
+
+' ================================
+' USAGE / DEPENDENCIES
+' ================================
+
+Personage ..> GoType: parameter in go
+MainHero ..> GoType: parameter in go
+Personage ..> ManMood: uses
+ManMood ..> Dialogue: creates
+Personage ..> Dialogue: uses
+MainHero ..> ThingInvisibleException : throws
+Personage ..> WorldContext : uses
+MainHero ..> WorldContext : uses
+World ..> WorldContext : creates
+
+
+
 
 @enduml

@@ -1,11 +1,11 @@
-package things.weapons;
+package personajes.weapons;
 
 import org.jetbrains.annotations.NotNull;
 
-public record Spear() {
+public record Helmet() {
     @NotNull
     @Override
     public String toString() {
-        return "копьё";
+        return "шлем";
     }
 }

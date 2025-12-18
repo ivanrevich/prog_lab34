@@ -1,15 +1,20 @@
 package personajes;
 
-import World.WorldContext;
-import nature.Weather;
+import nature.WorldContext;
+import nature.states.Weather;
+import personajes.interfaces.BaseMove;
+import personajes.interfaces.Dialogue;
+import personajes.states.GoType;
+import personajes.states.ManJob;
+import personajes.states.ManMood;
 import things.Thing;
-import things.buildings.CastleState;
-import things.weapons.Helmet;
-import things.weapons.Spear;
+import things.buildings.states.CastleState;
+import personajes.weapons.Helmet;
+import personajes.weapons.Spear;
 
 import java.util.Random;
 
-public class Personage extends Man implements BaseMove{
+public class Personage extends Man implements BaseMove {
     private ManJob manJob;
     private Helmet helmet;
     private Spear spear;
@@ -96,7 +101,7 @@ public class Personage extends Man implements BaseMove{
 
     @Override
     public void go(GoType goType) {
-        System.out.println(super.getName()+" "+goType.name);
+        System.out.println(super.getName()+" "+goType.getName());
     }
 
     @Override

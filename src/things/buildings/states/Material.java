@@ -1,4 +1,4 @@
-package things.buildings;
+package things.buildings.states;
 
 import java.util.Random;
 

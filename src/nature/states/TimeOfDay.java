@@ -1,4 +1,4 @@
-package World;
+package nature.states;
 
 public enum TimeOfDay {
     MORNING("утро"),

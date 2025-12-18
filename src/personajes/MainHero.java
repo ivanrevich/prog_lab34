@@ -1,13 +1,16 @@
 package personajes;
 
-import World.WorldContext;
+import nature.WorldContext;
 import exceptions.ThingInvisibleException;
-import nature.Weather;
+import nature.states.Weather;
+import personajes.interfaces.ExtendedMove;
+import personajes.states.GoType;
+import personajes.states.ManMood;
 import things.Thing;
-import things.ThingState;
+import things.states.ThingState;
 
 import java.util.ArrayList;
-public class MainHero extends Man implements ExtendedMove{
+public class MainHero extends Man implements ExtendedMove {
     public ArrayList<Thing> seenThings = new ArrayList<Thing>();
 
     public ArrayList<Personage> seenPersons = new ArrayList<Personage>();
@@ -33,7 +36,7 @@ public class MainHero extends Man implements ExtendedMove{
     @Override
     public void go(GoType goType) {
 
-        System.out.println(super.getName() + " "+goType.name);
+        System.out.println(super.getName() + " "+goType.getName());
     }
 
     @Override

@@ -1,6 +1,6 @@
 package things.buildings;
 
-import things.Sound;
+import things.states.Sound;
 import things.Thing;
 
 public class Hinge extends Thing {

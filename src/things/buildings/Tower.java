@@ -1,5 +1,7 @@
 package things.buildings;
 
+import things.buildings.states.Material;
+
 public class Tower extends Building{
     protected Tower(String title, Material material) {
         super(title, material);

@@ -1,4 +1,4 @@
-package things.buildings;
+package things.buildings.states;
 
 public enum CastleState {
     INTACT("целый"),

@@ -1,6 +1,8 @@
 package things.buildings;
 
 import things.Thing;
+import things.buildings.states.CastleState;
+import things.buildings.states.Material;
 
 import java.util.ArrayList;
 import java.util.Random;

@@ -1,6 +1,6 @@
-package personajes;
+package personajes.interfaces;
 
-import things.Thing;
+import personajes.states.ManMood;
 
 public interface ExtendedMove extends BaseMove{
     void think(String thought);

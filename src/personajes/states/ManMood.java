@@ -1,4 +1,7 @@
-package personajes;
+package personajes.states;
+
+import personajes.Man;
+import personajes.interfaces.Dialogue;
 
 import java.util.Random;
 

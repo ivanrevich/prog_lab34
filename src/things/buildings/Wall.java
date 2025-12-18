@@ -1,5 +1,7 @@
 package things.buildings;
 
+import things.buildings.states.Material;
+
 public class Wall extends Building{
     protected Wall(String name, Material material) {
         super(name, Material.random());

@@ -1,5 +1,7 @@
 package nature;
 
+import nature.states.Weather;
+
 public class Sky extends NatureObject{
     private Weather weather = Weather.random();
 

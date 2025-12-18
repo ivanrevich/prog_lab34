@@ -1,12 +1,10 @@
-package World;
+package nature;
 
 import exceptions.ThingInvisibleException;
-import nature.NatureObject;
-import nature.Sea;
-import nature.Sky;
-import personajes.GoType;
+import nature.states.TimeOfDay;
+import personajes.states.GoType;
 import personajes.MainHero;
-import personajes.ManMood;
+import personajes.states.ManMood;
 import personajes.Personage;
 import things.Thing;
 import things.buildings.*;

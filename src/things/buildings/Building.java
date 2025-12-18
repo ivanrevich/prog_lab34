@@ -1,6 +1,7 @@
 package things.buildings;
 
 import things.Thing;
+import things.buildings.states.Material;
 
 public abstract class Building extends Thing {
     private Material material;

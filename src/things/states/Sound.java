@@ -1,4 +1,4 @@
-package things;
+package things.states;
 
 import java.util.Random;
 

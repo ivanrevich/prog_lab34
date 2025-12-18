@@ -1,5 +1,7 @@
 package things;
 
+import things.states.ThingState;
+
 public abstract class Thing {
     public final String title;
     private ThingState state;

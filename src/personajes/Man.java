@@ -1,8 +1,10 @@
 package personajes;
 
-import World.WorldContext;
+import nature.WorldContext;
+import personajes.interfaces.BaseMove;
+import personajes.states.ManMood;
 
-public abstract class Man implements BaseMove{
+public abstract class Man implements BaseMove {
     private String name;
     private ManMood mood;
     public Man(String name) {

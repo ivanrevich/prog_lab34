@@ -1,4 +1,4 @@
-package personajes;
+package personajes.states;
 
 import java.util.Random;
 

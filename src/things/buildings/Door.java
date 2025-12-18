@@ -1,5 +1,7 @@
 package things.buildings;
 
+import things.buildings.states.Material;
+
 import java.util.Random;
 
 public class Door extends Building{
